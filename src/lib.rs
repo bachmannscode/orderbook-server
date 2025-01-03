@@ -1,3 +1,4 @@
+use env_logger::Target;
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::net::SocketAddr;
@@ -6,6 +7,17 @@ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::broadcast::error::RecvError;
 use tokio::sync::{broadcast, mpsc};
+
+pub fn init_logger(logging_level: String, target: Target) {
+    std::env::set_var("RUST_LOG", logging_level);
+    env_logger::Builder::new()
+        .parse_default_env()
+        .format_timestamp(None)
+        .format_level(false)
+        .format_target(false)
+        .target(target)
+        .init();
+}
 
 #[derive(Clone, Debug)]
 struct Message {
