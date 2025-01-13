@@ -17,12 +17,13 @@ impl FromStr for Message {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut s = s.split(':');
-        let operation: Operation = s.next().ok_or("Unsupported command.")?.parse()?;
-        let commodity: Commodity = s.next().ok_or("Unsupported command.")?.parse()?;
-        Ok(Self {
-            commodity,
-            operation,
-        })
+        match (s.next(), s.next(), s.next()) {
+            (Some(op), Some(cm), None) if !op.is_empty() && !cm.is_empty() => Ok(Self {
+                operation: op.parse()?,
+                commodity: cm.parse()?,
+            }),
+            _ => Err("Invalid order command."),
+        }
     }
 }
 
